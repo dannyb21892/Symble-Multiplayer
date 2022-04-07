@@ -12,7 +12,7 @@ const server = express()
 
 const io = socketIO(server, {
   cors: {
-    origin: "https://www.symble.app",///"http://localhost:4200",//"*",
+    origin: "https://www.symble.app",//"*",//"http://localhost:4200",//
     methods: ["GET", "POST"]
   }
 });
@@ -31,8 +31,6 @@ const messageSafeGameState = (game) => {
 }
 
 io.on('connection', (socket) => {
-  console.log('Client connected');
-
   socket.on('join-room', (roomKey) => prepareGame(socket, roomKey))
 
   socket.emit('connected');
@@ -48,14 +46,9 @@ io.on('connection', (socket) => {
     io.in(currentRoom).socketsLeave(currentRoom);
     delete openGames[currentRoom];
   });
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected')
-  });
 });
 
 const prepareGame = (socket, roomKey = '') => {
-  console.log(roomKey)
   if(roomKey){//custom room name
     roomKey = "custom_" + roomKey;
     let existing = openGames[roomKey];
@@ -149,7 +142,7 @@ const manageGame = (room) => {
       p1.socket.emit('correct', {game: messageSafeGameState(game), player: p1.socket.id, answer: answerList[p1.score]});
       p2.socket.emit('opponent-correct', {game: messageSafeGameState(game), player: p1.socket.id});
     }
-    else if(p1.guesses > 8){
+    else if(p1.guesses >= 8){
       p1.socket.emit('lose', {game: messageSafeGameState(game), player: p1.socket.id, outcome: 'You lost! You ran out of guesses!'});
       p2.socket.emit('win', {game: messageSafeGameState(game), player: p2.socket.id, outcome: 'You win! Your opponent ran out of guesses!'});
       p1.socket.disconnect();
@@ -168,7 +161,7 @@ const manageGame = (room) => {
       p2.socket.emit('correct', {game: messageSafeGameState(game), player: p2.socket.id, answer: answerList[p2.score]});
       p1.socket.emit('opponent-correct', {game: messageSafeGameState(game), player: p2.socket.id});
     }
-    else if(p2.guesses > 8){
+    else if(p2.guesses >= 8){
       p2.socket.emit('lose', {game: messageSafeGameState(game), player: p2.socket.id, outcome: 'You lost! You ran out of guesses!'});
       p1.socket.emit('win', {game: messageSafeGameState(game), player: p1.socket.id, outcome: 'You win! Your opponent ran out of guesses!'});
       p2.socket.disconnect();
