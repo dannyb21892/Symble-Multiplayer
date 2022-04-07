@@ -12,7 +12,7 @@ const server = express()
 
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:4200",//"*"
+    origin: "https://www.symble.app",///"http://localhost:4200",//"*",
     methods: ["GET", "POST"]
   }
 });
@@ -138,7 +138,7 @@ const manageGame = (room) => {
         p1.socket.emit('tie', {game: messageSafeGameState(game), player: p1.socket.id, outcome: "Time's up! Amazing, an exact tie!"});
         p2.socket.emit('tie', {game: messageSafeGameState(game), player: p2.socket.id, outcome: "Time's up! Amazing, an exact tie!"});
       }
-    }, 3000);
+    }, 300000);
   }, 3000);
 
   p1.socket.on('guess', (guess) => {
