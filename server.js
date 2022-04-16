@@ -10,6 +10,7 @@ const server = express()
   .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
+//ensure origin is symble.app before prod push!
 const io = socketIO(server, {
   cors: {
     origin: "https://www.symble.app",//"*",//"http://localhost:4200",//
@@ -127,7 +128,6 @@ const manageGame = (room) => {
         loser.socket.emit('lose', {game: messageSafeGameState(game), player: loser.socket.id, outcome: "Time's up! You lost!"});
       }
       else {
-        console.log(messageSafeGameState(game))
         p1.socket.emit('tie', {game: messageSafeGameState(game), player: p1.socket.id, outcome: "Time's up! Amazing, an exact tie!"});
         p2.socket.emit('tie', {game: messageSafeGameState(game), player: p2.socket.id, outcome: "Time's up! Amazing, an exact tie!"});
       }
